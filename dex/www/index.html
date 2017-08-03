@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en" ng-app="pokedex">
+	<head>
+		<meta charset="utf-8">
+    	<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<meta http-equiv="Content-Security-Policy" content="default-src * data:; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
+
+		<link rel="stylesheet" href="lib/onsenui/css/onsenui.css">
+		<link rel="stylesheet" href="lib/onsenui/css/onsen-css-components.css">
+		<link rel="stylesheet" href="css/dex.css">
+    	<link rel="stylesheet" href="css/script.css"/>
+
+	    <script src="lib/onsenui/js/onsenui.js"></script>
+	    <script src="js/angular.min.js"></script>
+	    <script src="lib/onsenui/js/angular-onsenui.js"></script>
+	    <script src="js/Chart.min.js"></script>
+	    <script src="js/angular-chart.min.js"></script>
+	    <!--<script type="text/javascript" src="cordova.js"></script>-->
+	    <script src="js/dex.js"></script>
+	    <script src="js/promise.min.js"></script>
+    </head>
+
+	<body ng-controller="PokeCtrl">
+		<ons-page>
+			<ons-tabbar>
+				<ons-tab icon="fa-search" label="Search" page="tabsearch.html" active>
+				</ons-tab>
+				<ons-tab icon="fa-cogs" label="Settings" page="placeholderTab.html">
+				</ons-tab>
+			</ons-tabbar>
+		</ons-page>
+	</body>
+
+  	<ons-template id="tabsearch.html">
+  		<ons-page>
+  			<ons-navigator id="myNavigator" page="pkmnListTab.html"></ons-navigator>
+		</ons-page>
+  	</ons-template>
+
+  	<ons-template id="pkmnListTab.html">
+		<ons-page id="searchtab">
+			<ons-toolbar>
+				<div class="center">{{ listName }}</div>
+				<div class="right">
+					<form>
+	              		<ons-input ng-model="form.searchText" class="searchform" placeholder="Search" value="" type="search"></ons-input>
+	            	</form>
+            	</div>
+			</ons-toolbar>
+
+		  	<ons-list>
+		  		<ons-list-item id="pkmnList" ng-click="pkmnClicked($event, item)" ons-lazy-repeat="MyDelegate" modifier="tappable">
+		  			<div class="left">
+        				<img ng-src="img/pokemon/icons/{{item.substring(6,item.length).toLowerCase()}}.png">
+      				</div>
+      				<div class="center">
+        				{{ item }}
+      				</div>
+    				
+  				</ons-list-item>
+  			</ons-list>
+		</ons-page>  
+	</ons-template>
+
+	<ons-template id="pkmnStatsTab.html">
+		<ons-page>
+			<ons-toolbar>
+				<div class="left"><ons-back-button>Back</ons-back-button></div>
+				<div class="center">{{ statsName }}</div>
+			</ons-toolbar>    
+			<div class="pkmndiv" style="background-color:{{pkmnDivBgColor}}; background-image:linear-gradient(top, {{color1}} {{startGrad}}%, {{color2}} {{endGrad}}%); background-image:-webkit-linear-gradient(top, {{color1}} {{startGrad}}%, {{color2}} {{endGrad}}%); background-image:-ms-linear-gradient(top, {{color1}} {{startGrad}}%, {{color2}} {{endGrad}}%); background-image:-webkit-gradient(linear,left top,left bottom,color-stop({{startGrad/100.0}}, {{color1}}), color-stop({{endGrad/100.0}}, {{color2}}));">
+					<span class="helper"></span>
+					<img class="pkmn" ng-src="img/pokemon/gif/{{pkmnName.toLowerCase()}}{{forme > -1 ? '-'+currentPkmn.forms[forme].suffix : ''}}.gif">
+			</div>
+
+
+			<ons-button ng-click="formeClicked($event, -1)" class="forme-button" style="width: {{formeButtonSize}}%">Base</ons-button>
+			<ons-button ng-click="formeClicked($event, 0)" class="forme-button" style="width: {{formeButtonSize}}%; display: {{ currentPkmn.forms ? 'initial' : 'none' }}">{{ currentPkmn.forms[0].suffix }}</ons-button>
+			<ons-button ng-click="formeClicked($event, 1)" class="forme-button" style="width: {{formeButtonSize}}%; display: {{ currentPkmn.forms && currentPkmn.forms.length >= 2 ? 'initial' : 'none' }}">{{ currentPkmn.forms[1].suffix }}</ons-button>
+			<ons-button ng-click="formeClicked($event, 2)" class="forme-button" style="width: {{formeButtonSize}}%; display: {{ currentPkmn.forms && currentPkmn.forms.length >= 3 ? 'initial' : 'none' }}">{{ currentPkmn.forms[2].suffix }}</ons-button>
+
+			<canvas id="radar" height={{height_chart}} class="chart chart-radar" chart-data="data" chart-options="chartOptions" chart-labels="labels"></canvas>
+			<ons-list>
+				<ons-list-header>Species Name</ons-list-header>
+			    <ons-list-item>Name</ons-list-item>
+			    <ons-list-header>Height</ons-list-header>
+			    <ons-list-item>Height value</ons-list-item>
+			    <ons-list-header>Weight</ons-list-header>
+			    <ons-list-item>Weight value</ons-list-item>
+
+			    <ons-list-header>Placeholder</ons-list-header>
+			    <ons-list-item modifier="chevron" tappable>Placeholder value</ons-list-item>
+
+			</ons-list>
+		</ons-page>
+	</ons-template>
+
+	<ons-template id="placeholderTab.html">
+		<ons-page>
+		    <ons-toolbar>
+		    	<div class="center">Placeholder</div>
+		    </ons-toolbar>
+
+		    <p style="text-align: center;">
+		      This is a placeholder page.
+		    </p>
+		</ons-page>
+	</ons-template>
+</html>
