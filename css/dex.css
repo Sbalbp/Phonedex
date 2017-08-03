@@ -1,0 +1,31 @@
+.pkmndiv{
+	overflow: visible;
+    height: 50%;
+	text-align: center;
+}
+
+.helper {
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+
+.pkmn {
+	vertical-align: middle;
+	width: auto;
+	height: auto;
+}
+
+.forme-button-container {
+ 
+}
+
+.forme-button {
+    float: left;
+    display: inline-block;
+}
+
+.searchform{
+    margin-top: 4px;
+    margin-right: 8px;
+}
