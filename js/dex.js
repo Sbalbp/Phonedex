@@ -7,7 +7,7 @@ module.filter('pkmnNameFilter', function() {
     return function(pkmns, searchTerm) {
     	out = [];
     	angular.forEach(pkmns, function(pkmn){
-    		if( !searchTerm || pkmn.ename.toLowerCase().includes(searchTerm.toLowerCase()) || (parseInt(searchTerm) && pkmn.id == parseInt(searchTerm)) ){
+    		if( !searchTerm || pkmn.species.toLowerCase().includes(searchTerm.toLowerCase()) || (parseInt(searchTerm) && pkmn.id == parseInt(searchTerm)) ){
     			out.push(pkmn);
     		}
     	});
@@ -24,24 +24,24 @@ module.controller('PokeCtrl', function($scope, $http){
 	$scope.forme = 0;
 	$scope.formeButtonSize = 100;
 	$scope.types = {
-		"\u8349": "#2FB62F",		// Grass
-		"\u6bd2": "#862D86",		// Poison
-		"\u708e": "#FF751A",		// Fire
-		"\u98de\u884c": "#99CEFF",	// Flying
-		"\u6c34": "#005CE6",		// Water
-		"\u866b": "#558000",		// Bug
-		"\u4e00\u822c": "#8C8C8C",	// Normal
-		"\u683c\u6597": "#B30000",	// Fighting
-		"\u7535": "#FFD11A",		// Electric
-		"\u5730\u4e0a": "#AC7339",	// Ground
-		"\u8d85\u80fd": "#FF33CC",	// Psychic
-		"\u5ca9\u77f3": "#997300",	// Rock
-		"\u51b0": "#99FFFF",		// Ice
-		"\u9f99": "#751AFF",		// Dragon
-		"\u5e7d\u7075": "#6B00B3",	// Ghost
-		"\u6076": "#262626",		// Dark
-		"\u94a2": "#A6A6A6",		// Steel
-		"\u5996\u7cbe": "#FFB3FF",	// Fairy
+		"grass": "#2FB62F",		// Grass
+		"poison": "#862D86",	// Poison
+		"fire": "#FF751A",		// Fire
+		"flying": "#99CEFF",	// Flying
+		"water": "#005CE6",		// Water
+		"bug": "#558000",		// Bug
+		"normal": "#8C8C8C",	// Normal
+		"fighting": "#B30000",	// Fighting
+		"electric": "#FFD11A",	// Electric
+		"ground": "#AC7339",	// Ground
+		"psychic": "#FF33CC",	// Psychic
+		"rock": "#997300",		// Rock
+		"ice": "#99FFFF",		// Ice
+		"dragon": "#751AFF",	// Dragon
+		"ghost": "#6B00B3",		// Ghost
+		"dark": "#262626",		// Dark
+		"steel": "#A6A6A6",		// Steel
+		"fairy": "#FFB3FF",		// Fairy
 		"none": "#FFFFFF"
 	};
 
@@ -53,7 +53,7 @@ module.controller('PokeCtrl', function($scope, $http){
       	if($scope.pkmns){
 			out = [];
 	    	angular.forEach($scope.pkmns, function(pkmn){
-	    		if( !$scope.form.searchText || pkmn.ename.toLowerCase().indexOf($scope.form.searchText.toLowerCase()) > -1 || (parseInt($scope.form.searchText) && pkmn.id == parseInt($scope.form.searchText)) ){
+	    		if( !$scope.form.searchText || pkmn.species.toLowerCase().indexOf($scope.form.searchText.toLowerCase()) > -1 || (parseInt($scope.form.searchText) && pkmn.id == parseInt($scope.form.searchText)) ){
 	    			out.push(pkmn);
 	    		}
 	    	});
@@ -78,7 +78,7 @@ module.controller('PokeCtrl', function($scope, $http){
       	configureItemScope: function(index, itemScope) {
         	// Initialize scope
         	if($scope.filteredPkmns[index]){
-        		itemScope.item = $scope.filteredPkmns[index].id + " - " + $scope.filteredPkmns[index].ename;
+        		itemScope.item = $scope.filteredPkmns[index].id + " - " + $scope.filteredPkmns[index].species;
         	}
         	else{
         		itemScope.item = "";
@@ -98,23 +98,21 @@ module.controller('PokeCtrl', function($scope, $http){
 
 	$scope.pkmnClicked = function($event, pkmn) {
 		$scope.currentPkmn = $scope.pkmns[parseInt(pkmn.substring(0,3))-1];
-		$scope.pkmnName = $scope.currentPkmn.ename;
-		console.log($scope.currentPkmn);
-		console.log($scope.pkmnName);
-		console.log($scope.pkmnName.toLowerCase());
-		$scope.forme = -1;
+		$scope.nForme = 0;
+		$scope.currentForme = $scope.currentPkmn.forms[$scope.nForme];
+		$scope.pkmnName = $scope.currentPkmn.species;
 
 		// Type background
-		var type1 = $scope.currentPkmn.type[0];
-		var type2 = $scope.currentPkmn.type.length > 1 ? $scope.currentPkmn.type[1] : "none";
+		var type1 = $scope.currentForme.type[0];
+		var type2 = $scope.currentForme.type.length > 1 ? $scope.currentForme.type[1] : "none";
 		$scope.changeTypeBG(type1, type2);
 
 		// Stats
-		$scope.changeStats($scope.currentPkmn.base);
+		$scope.changeStats($scope.currentForme.stats);
 
 		// Forms
-		if($scope.currentPkmn.forms){
-			$scope.formeButtonSize = 100.0/($scope.currentPkmn.forms.length+1);
+		if($scope.currentPkmn.forms.length > 1){
+			$scope.formeButtonSize = 100.0/($scope.currentPkmn.forms.length);
 		}
 		else{
 			$scope.formeButtonSize = 100;
@@ -126,21 +124,16 @@ module.controller('PokeCtrl', function($scope, $http){
     }
 
     $scope.formeClicked = function($event, formeIndex) {
-    	$scope.forme = formeIndex;
+    	$scope.nForme = formeIndex;
+		$scope.currentForme = $scope.currentPkmn.forms[$scope.nForme];
 
-    	if($scope.forme > -1){
-	    	var type1 = $scope.currentPkmn.forms[$scope.forme].type[0];
-			var type2 = $scope.currentPkmn.forms[$scope.forme].type.length > 1 ? $scope.currentPkmn.forms[$scope.forme].type[1] : "none";
-
-			$scope.changeStats($scope.currentPkmn.forms[$scope.forme].base);
-		}
-		else{
-			var type1 = $scope.currentPkmn.type[0];
-			var type2 = $scope.currentPkmn.type.length > 1 ? $scope.currentPkmn.type[1] : "none";
-
-			$scope.changeStats($scope.currentPkmn.base);
-		}
+    	// Type background
+		var type1 = $scope.currentForme.type[0];
+		var type2 = $scope.currentForme.type.length > 1 ? $scope.currentForme.type[1] : "none";
 		$scope.changeTypeBG(type1, type2);
+
+		// Stats
+		$scope.changeStats($scope.currentForme.stats);
     }
 
     // Radar graph
@@ -174,13 +167,13 @@ module.controller('PokeCtrl', function($scope, $http){
 
 	$scope.changeStats = function(base){
 		$scope.data = [
-  			$scope.currentPkmn && $scope.currentPkmn.base ? [
-  																base.HP,
-  																base.Attack,
-  																base.Defense,
-  																base["Sp.Atk"],
-  																base["Sp.Def"],
-  																base.Speed
+  			$scope.currentForme && $scope.currentForme.stats ? [
+  																base.hp,
+  																base.attack,
+  																base.defense,
+  																base.spAtk,
+  																base.spDef,
+  																base.speed
   															] : [1,1,1,1,1,1]
   		];
 	}
