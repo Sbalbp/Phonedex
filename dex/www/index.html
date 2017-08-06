@@ -11,7 +11,6 @@
 		<link rel="stylesheet" href="lib/onsenui/css/onsenui.css">
 		<link rel="stylesheet" href="lib/onsenui/css/onsen-css-components.css">
 		<link rel="stylesheet" href="css/dex.css">
-    	<link rel="stylesheet" href="css/script.css"/>
 
 	    <script src="lib/onsenui/js/onsenui.js"></script>
 	    <script src="js/angular.min.js"></script>
@@ -73,26 +72,28 @@
 			</ons-toolbar>    
 			<div class="pkmndiv" style="background-color:{{pkmnDivBgColor}}; background-image:linear-gradient(top, {{color1}} {{startGrad}}%, {{color2}} {{endGrad}}%); background-image:-webkit-linear-gradient(top, {{color1}} {{startGrad}}%, {{color2}} {{endGrad}}%); background-image:-ms-linear-gradient(top, {{color1}} {{startGrad}}%, {{color2}} {{endGrad}}%); background-image:-webkit-gradient(linear,left top,left bottom,color-stop({{startGrad/100.0}}, {{color1}}), color-stop({{endGrad/100.0}}, {{color2}}));">
 					<span class="helper"></span>
-					<img class="pkmn" ng-src="img/pokemon/gif/{{pkmnName.toLowerCase()}}{{forme > -1 ? '-'+currentPkmn.forms[forme].suffix : ''}}.gif">
+					<img class="pkmn" ng-src="img/pokemon/gif/{{currentForme.name.toLowerCase()}}.gif">
 			</div>
 
 
-			<ons-button ng-click="formeClicked($event, -1)" class="forme-button" style="width: {{formeButtonSize}}%">Base</ons-button>
-			<ons-button ng-click="formeClicked($event, 0)" class="forme-button" style="width: {{formeButtonSize}}%; display: {{ currentPkmn.forms ? 'initial' : 'none' }}">{{ currentPkmn.forms[0].suffix }}</ons-button>
-			<ons-button ng-click="formeClicked($event, 1)" class="forme-button" style="width: {{formeButtonSize}}%; display: {{ currentPkmn.forms && currentPkmn.forms.length >= 2 ? 'initial' : 'none' }}">{{ currentPkmn.forms[1].suffix }}</ons-button>
-			<ons-button ng-click="formeClicked($event, 2)" class="forme-button" style="width: {{formeButtonSize}}%; display: {{ currentPkmn.forms && currentPkmn.forms.length >= 3 ? 'initial' : 'none' }}">{{ currentPkmn.forms[2].suffix }}</ons-button>
+			<ons-button ng-click="formeClicked($event, 0)" class="forme-button" style="width: {{formeButtonSize}}%">{{currentPkmn.species.toLowerCase() == currentPkmn.forms[0].name ? 'base' : currentPkmn.forms[0].name}}</ons-button>
+			<ons-button ng-click="formeClicked($event, 1)" class="forme-button" style="width: {{formeButtonSize}}%; display: {{ currentPkmn.forms.length >= 2 ? 'initial' : 'none' }}">{{ currentPkmn.forms[1].name }}</ons-button>
+			<ons-button ng-click="formeClicked($event, 2)" class="forme-button" style="width: {{formeButtonSize}}%; display: {{ currentPkmn.forms.length >= 3 ? 'initial' : 'none' }}">{{ currentPkmn.forms[2].name }}</ons-button>
+			<ons-button ng-click="formeClicked($event, 3)" class="forme-button" style="width: {{formeButtonSize}}%; display: {{ currentPkmn.forms.length >= 4 ? 'initial' : 'none' }}">{{ currentPkmn.forms[3].name }}</ons-button>
+			<ons-button ng-click="formeClicked($event, 4)" class="forme-button" style="width: {{formeButtonSize}}%; display: {{ currentPkmn.forms.length >= 5 ? 'initial' : 'none' }}">{{ currentPkmn.forms[4].name }}</ons-button>
+			<ons-button ng-click="formeClicked($event, 5)" class="forme-button" style="width: {{formeButtonSize}}%; display: {{ currentPkmn.forms.length >= 6 ? 'initial' : 'none' }}">{{ currentPkmn.forms[5].name }}</ons-button>
 
 			<canvas id="radar" height={{height_chart}} class="chart chart-radar" chart-data="data" chart-options="chartOptions" chart-labels="labels"></canvas>
 			<ons-list>
 				<ons-list-header>Species Name</ons-list-header>
-			    <ons-list-item>Name</ons-list-item>
+			    <ons-list-item>{{currentPkmn.species}}</ons-list-item>
 			    <ons-list-header>Height</ons-list-header>
-			    <ons-list-item>Height value</ons-list-item>
+			    <ons-list-item>{{currentForme.height/10}} m</ons-list-item>
 			    <ons-list-header>Weight</ons-list-header>
-			    <ons-list-item>Weight value</ons-list-item>
+			    <ons-list-item>{{currentForme.weight/10}} kg</ons-list-item>
 
-			    <ons-list-header>Placeholder</ons-list-header>
-			    <ons-list-item modifier="chevron" tappable>Placeholder value</ons-list-item>
+			    <ons-list-header>Pokedex entry</ons-list-header>
+			    <ons-list-item modifier="chevron" tappable>{{currentPkmn.description}}</ons-list-item>
 
 			</ons-list>
 		</ons-page>
